@@ -1,17 +1,18 @@
-import axios from "axios";
+import axios, {AxiosResponse} from "axios";
 import {
+    ResponceType,
     TasksPutRequestModelType,
     TasksRequestType,
-    TasksUpdateResponseType,
+    TasksType,
     TodoItemResponceType,
-    TodoResponceType
+
 } from "./APITypes";
 
 const instance = axios.create({
     baseURL: 'https://social-network.samuraijs.com/api/1.1/',
     withCredentials: true,
     headers: {
-        'API-KEY': '31d3b244-d207-4062-b145-297089d8f2c1'
+        'API-KEY': 'fdf6f163-b057-4eee-9b85-ec1216c43810'
     }
 })
 
@@ -21,31 +22,31 @@ export const todolistAPI = {
         return instance.get<TodoItemResponceType[]>('todo-lists')
     },
     postTodolists(title: string) { //<100
-        return instance.post<null, TodoResponceType<{ item: TodoItemResponceType }>,
+        return instance.post<null, ResponceType<{ item: TodoItemResponceType }>,
             { title: string }>('todo-lists', {title})
     },
     deleteTodolists(todolistID: string) {
-        return instance.delete<TodoResponceType>(`todo-lists/${todolistID}`)
+        return instance.delete<ResponceType>(`todo-lists/${todolistID}`)
     },
     putTodolists(todolistID: string, title: string) {
-        return instance.put<null, TodoResponceType, { title: string }>(`todo-lists/${todolistID}`, {title})
+        return instance.put<null, ResponceType, { title: string }>(`todo-lists/${todolistID}`, {title})
     },
     putReorderTodo(todolistID: string, putAfterItemId: string) {
-        return instance.put<null, TodoResponceType, { putAfterItemId: string }>(`todo-lists/${todolistID}/tasks`, {putAfterItemId})
+        return instance.put<null, ResponceType, { putAfterItemId: string }>(`todo-lists/${todolistID}/tasks`, {putAfterItemId})
     },
     getTasks(todolistID: string,) {
         return instance.get<TasksRequestType>(`todo-lists/${todolistID}/tasks`)
     },
     postTasks(todolistID: string, title: string) {
-        return instance.post<null, TodoResponceType, { title: string }>(`todo-lists/${todolistID}/tasks`, {title})
+        return instance.post<null, ResponceType, { title: string }>(`todo-lists/${todolistID}/tasks`, {title})
     },
-    putTask(todolistID: string, taskID: string) {
-        return instance.put<null, TasksUpdateResponseType, TasksPutRequestModelType>(`todo-lists/${todolistID}/tasks${taskID}`)
+    putTask(todolistID: string, taskID: string,model:TasksPutRequestModelType) {
+        return instance.put<null, AxiosResponse<ResponceType<{item:TasksType}>>, TasksPutRequestModelType>(`todo-lists/${todolistID}/tasks/${taskID}`,model)
     },
     deleteTask(todolistID: string, taskID: string) {
-        return instance.delete<TodoResponceType>(`todo-lists/${todolistID}/tasks${taskID}`)
+        return instance.delete<ResponceType>(`todo-lists/${todolistID}/tasks/${taskID}`)
     },
     reorderTasks(todolistID: string, taskID: string, putAfterItemId: string) {
-        return instance.put<null, TodoResponceType, { putAfterItemId: string }>(`todo-lists/${todolistID}/tasks/${taskID}/reorder`, {putAfterItemId})
+        return instance.put<null, ResponceType, { putAfterItemId: string }>(`todo-lists/${todolistID}/tasks/${taskID}/reorder`, {putAfterItemId})
     }
 }

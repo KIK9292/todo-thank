@@ -1,5 +1,4 @@
 import React, {useEffect} from 'react';
-import {Tasks} from "../Tasks/Tasks";
 import {RootReducerType, useAppDispatch} from "../../Data/Redux/Store";
 import {useSelector} from "react-redux";
 import {DomainType, getTodoTC} from "../../Data/Redux/Reducers/TodolistReducer";
@@ -15,7 +14,7 @@ export const Todolists = () => {
     return (
         <div className={s.todolistsWrapper}>
             {todo.map(el=>{
-                return <Todolist todolistId={el.id} todolistTitle={el.title} key={el.id}/>
+                return <Todolist todolistId={el.id} todolistTitle={el.title} key={el.id} filterStatus={el.filter}/>
             })}
         </div>
     );

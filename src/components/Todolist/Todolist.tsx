@@ -8,32 +8,41 @@ import Button from "@mui/material/Button"
 import s from "./Todolist.module.css"
 import {AddItemForm} from "../AddItemForm/AddIemForm";
 import {useSelector} from "react-redux";
-import {RootReducerType} from "../../Data/Redux/Store";
+import {RootReducerType, useAppDispatch} from "../../Data/Redux/Store";
 import {TasksReducerState} from "../../Data/Redux/Reducers/TasksReducer";
+import {FilterValuesType, removeTodolistTC, updateStatusFilterAC} from "../../Data/Redux/Reducers/TodolistReducer";
 
 type TodolistPropsType = {
     todolistId: string
     todolistTitle: string
+    filterStatus:FilterValuesType
 }
 
 
 export const Todolist = (props: TodolistPropsType) => {
-    const {todolistId, todolistTitle} = props
+    const {todolistId, todolistTitle,filterStatus} = props
+    const dispatch = useAppDispatch()
     const tasks = useSelector<RootReducerType, TasksReducerState>(state => state.Tasks)
-    return (
+    const onClickHandler=()=>{
+        dispatch(removeTodolistTC(todolistId))
+    }
+    const onClickUpdateStatusFilterButton=(newStatus:FilterValuesType)=>{
+dispatch(updateStatusFilterAC(todolistId,newStatus))
+    }
+        return (
         <div className={s.TodolistWrapper}><Paper elevation={6}>
             <div className={s.nameTodolistContainer}><h2>{todolistTitle}</h2>
-                <IconButton aria-label="delete" size="large">
+                <IconButton aria-label="delete" size="large" onClick={onClickHandler}>
                     <DeleteIcon/>
                 </IconButton></div>
             <AddItemForm callback={() => {
             }}/>
-            <Tasks todolistId={todolistId}/>
+            <Tasks todolistId={todolistId} filterStatus={filterStatus}/>
             {tasks[todolistId].length !== 0 &&
               <ButtonGroup variant="contained" aria-label="outlined primary button group">
-                <Button>All</Button>
-                <Button>Active</Button>
-                <Button>Completed</Button>
+                <Button onClick={()=>onClickUpdateStatusFilterButton('All')} disabled={filterStatus==='All'} >All</Button>
+                <Button onClick={()=>onClickUpdateStatusFilterButton('Active')} disabled={filterStatus==='Active'} >Active</Button>
+                <Button onClick={()=>onClickUpdateStatusFilterButton('Completed')} disabled={filterStatus==='Completed'}>Completed</Button>
               </ButtonGroup>}
 
         </Paper></div>
