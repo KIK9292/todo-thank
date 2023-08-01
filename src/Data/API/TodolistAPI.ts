@@ -22,7 +22,7 @@ export const todolistAPI = {
         return instance.get<TodoItemResponceType[]>('todo-lists')
     },
     postTodolists(title: string) { //<100
-        return instance.post<null, ResponceType<{ item: TodoItemResponceType }>,
+        return instance.post<null, AxiosResponse<ResponceType<{ item: TodoItemResponceType }>,{title: string}>,
             { title: string }>('todo-lists', {title})
     },
     deleteTodolists(todolistID: string) {
@@ -38,7 +38,7 @@ export const todolistAPI = {
         return instance.get<TasksRequestType>(`todo-lists/${todolistID}/tasks`)
     },
     postTasks(todolistID: string, title: string) {
-        return instance.post<null, ResponceType, { title: string }>(`todo-lists/${todolistID}/tasks`, {title})
+        return instance.post<ResponceType<{ item: TasksType }>, AxiosResponse<ResponceType<{ item: TasksType }>>, { title: string } >(`todo-lists/${todolistID}/tasks`, {title})
     },
     putTask(todolistID: string, taskID: string,model:TasksPutRequestModelType) {
         return instance.put<null, AxiosResponse<ResponceType<{item:TasksType}>>, TasksPutRequestModelType>(`todo-lists/${todolistID}/tasks/${taskID}`,model)

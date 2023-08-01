@@ -9,7 +9,7 @@ import s from "./Todolist.module.css"
 import {AddItemForm} from "../AddItemForm/AddIemForm";
 import {useSelector} from "react-redux";
 import {RootReducerType, useAppDispatch} from "../../Data/Redux/Store";
-import {TasksReducerState} from "../../Data/Redux/Reducers/TasksReducer";
+import {addNewTaskTC, TasksReducerState} from "../../Data/Redux/Reducers/TasksReducer";
 import {FilterValuesType, removeTodolistTC, updateStatusFilterAC} from "../../Data/Redux/Reducers/TodolistReducer";
 
 type TodolistPropsType = {
@@ -29,14 +29,16 @@ export const Todolist = (props: TodolistPropsType) => {
     const onClickUpdateStatusFilterButton=(newStatus:FilterValuesType)=>{
 dispatch(updateStatusFilterAC(todolistId,newStatus))
     }
+    const addNewTaskCallback=(newTask:string)=>{
+        dispatch(addNewTaskTC(todolistId,newTask))
+    }
         return (
         <div className={s.TodolistWrapper}><Paper elevation={6}>
             <div className={s.nameTodolistContainer}><h2>{todolistTitle}</h2>
                 <IconButton aria-label="delete" size="large" onClick={onClickHandler}>
                     <DeleteIcon/>
                 </IconButton></div>
-            <AddItemForm callback={() => {
-            }}/>
+            <AddItemForm callback={addNewTaskCallback}/>
             <Tasks todolistId={todolistId} filterStatus={filterStatus}/>
             {tasks[todolistId].length !== 0 &&
               <ButtonGroup variant="contained" aria-label="outlined primary button group">

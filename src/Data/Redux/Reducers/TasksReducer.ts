@@ -1,4 +1,4 @@
-import {GetTodoACType, RemoveTodolistACType} from "./TodolistReducer";
+import {AddNewTodolistACType, GetTodoACType, RemoveTodolistACType} from "./TodolistReducer";
 import {TasksPutRequestModelType, TaskStatuses, TasksType} from "../../API/APITypes";
 import {AllThunkType, RootReducerType} from "../Store";
 import {todolistAPI} from "../../API/TodolistAPI";
@@ -10,6 +10,8 @@ export type TasksReducerActionType =
     | RemoveTaskACType
     | RemoveTodolistACType
     | UpdateTaskACType
+    | AddNewTaskACType
+|AddNewTodolistACType
 
 export type TasksReducerState = {
     [key: string]: TasksType[]
@@ -39,8 +41,15 @@ export const TasksReducer = (state: TasksReducerState = {}, action: TasksReducer
         case "UPDATE-STATUS": {
             return {
                 ...state,
-                [action.payload.todolistId]: state[action.payload.todolistId].map(el => el.id === action.payload.taskId ? action.payload.task : el)
+                [action.payload.task.todoListId]: state[action.payload.task.todoListId].map(el => el.id === action.payload.task.id ? action.payload.task : el)
             }
+        }
+        case "ADD-NEW-TASK":{
+            return { ...state,
+                [action.payload.task.todoListId]:[action.payload.task,...state[action.payload.task.todoListId]]}
+        }
+        case "ADD-TODOLIST":{
+            return {...state,[action.payload.todo.id]:[]}
         }
         default:
             return state
@@ -61,10 +70,17 @@ export const removeTaskAC = (todolistId: string, taskId: string) => {
     } as const
 }
 export type UpdateTaskACType = ReturnType<typeof updateTaskAC>
-export const updateTaskAC = (todolistId: string, taskId: string, task: TasksType) => {
+export const updateTaskAC = (task: TasksType) => {
     return {
         type: "UPDATE-STATUS",
-        payload: {todolistId, taskId, task}
+        payload: {task}
+    } as const
+}
+type AddNewTaskACType = ReturnType<typeof addNewTaskAC>
+export const addNewTaskAC = (task: TasksType) => {
+    return {
+        type: "ADD-NEW-TASK",
+        payload: {task}
     } as const
 }
 
@@ -95,9 +111,15 @@ export const updateStatusTaskTC = (todolistId: string, taskId: string, newStatus
                 deadline: task.deadline,
             }
             todolistAPI.putTask(todolistId, taskId, model)
-                // .then(res=>console.log(res.data.data.item))
-                .then(res => dispatch(updateTaskAC(todolistId, taskId, res.data.data.item)))
+                // .then(res=>console.log(res.data.item))
+                .then(res => dispatch(updateTaskAC(res.data.data.item)))
         }
 
+    }
+}
+export const addNewTaskTC=(todolistId:string,title:string): AllThunkType=>{
+    return (dispatch)=>{
+        todolistAPI.postTasks(todolistId,title)
+            .then(res=>dispatch(addNewTaskAC(res.data.data.item)))
     }
 }

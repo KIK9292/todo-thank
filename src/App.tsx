@@ -10,10 +10,14 @@ import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import {AddItemForm} from "./components/AddItemForm/AddIemForm";
+import {useAppDispatch} from "./Data/Redux/Store";
+import {addNewTodolistTC} from "./Data/Redux/Reducers/TodolistReducer";
 
 function App() {
-
-
+    const dispatch = useAppDispatch()
+const addNewTodo=(newTodo:string)=>{
+    dispatch(addNewTodolistTC(newTodo))
+}
   return (
     <div className={s.AppWrapper}>
         <AppBar position="static">
@@ -29,7 +33,7 @@ function App() {
         </AppBar>
         <Container fixed>
             <Grid container style={{padding: '20px'}}>
-                <AddItemForm callback={()=>{}}/>
+                <AddItemForm callback={addNewTodo}/>
             </Grid>
             <Grid container spacing={3}>
       <Todolists/>
