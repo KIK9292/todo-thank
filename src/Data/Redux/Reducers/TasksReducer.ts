@@ -123,3 +123,24 @@ export const addNewTaskTC=(todolistId:string,title:string): AllThunkType=>{
             .then(res=>dispatch(addNewTaskAC(res.data.data.item)))
     }
 }
+
+export const updateTitleTaskTC = (todolistId: string, taskId: string, newTitle: string): AllThunkType => {
+    return (dispatch, getState: () => RootReducerType) => {
+        let task = getState().Tasks[todolistId].find(f => f.id === taskId)
+        if (task) {
+            const model: TasksPutRequestModelType = {
+                title: newTitle,
+                description: task.description,
+                completed: !task.completed,
+                status: task.status,
+                priority: task.priority,
+                startDate: task.startDate,
+                deadline: task.deadline,
+            }
+            todolistAPI.putTask(todolistId, taskId, model)
+                // .then(res=>console.log(res.data.item))
+                .then(res => dispatch(updateTaskAC(res.data.data.item)))
+        }
+
+    }
+}

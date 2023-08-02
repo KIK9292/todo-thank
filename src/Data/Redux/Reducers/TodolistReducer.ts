@@ -1,11 +1,12 @@
 import {TodoItemResponceType} from "../../API/APITypes";
 import {todolistAPI} from "../../API/TodolistAPI";
-import {AllThunkType} from "../Store";
+import {AllThunkType, RootReducerType} from "../Store";
 
 export type TodoReducerActionType = GetTodoACType
     | RemoveTodolistACType
     | UpdateStatusFilterACType
     | AddNewTodolistACType
+|UpdateTitleTodolistACType
 
 export type FilterValuesType = 'All' | 'Active' | 'Completed';
 export type DomainType = TodoItemResponceType & {
@@ -35,6 +36,9 @@ export const TodolistReducer = (state: DomainType[] = [], action: TodoReducerAct
                 filter: 'All'
             }
             return [...state, newTodo]
+        }
+        case "UPDATE-TITLE-TODOLIST":{
+            return state.map(el=>el.id===action.payload.todolistId?{...el,title:action.payload.newTitle}:el)
         }
         default:
             return state
@@ -68,6 +72,13 @@ export const addNewTodolistAC = (todo: TodoItemResponceType) => {
         payload: {todo}
     } as const
 }
+type UpdateTitleTodolistACType=ReturnType<typeof updateTitleTodolistAC>
+export const updateTitleTodolistAC=(todolistId:string,newTitle:string)=>{
+    return{
+        type:"UPDATE-TITLE-TODOLIST",
+        payload: {todolistId, newTitle}
+    }as const
+}
 export const getTodoTC = (): AllThunkType => {
     return (dispatch) => {
         todolistAPI.getTodolists()
@@ -85,5 +96,12 @@ export const addNewTodolistTC=(newTodo:string):AllThunkType=>{
     return (dispatch)=>{
         todolistAPI.postTodolists(newTodo)
             .then(res=>dispatch(addNewTodolistAC(res.data.data.item)))
+    }
+}
+
+export const updateTitleTodoTC=(todolistId:string,newTitleTodo:string):AllThunkType=>{
+    return (dispatch)=>{
+       todolistAPI.putTodolists(todolistId,newTitleTodo)
+           .then(()=>{dispatch(updateTitleTodolistAC(todolistId,newTitleTodo))})
     }
 }

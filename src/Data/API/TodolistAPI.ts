@@ -29,10 +29,10 @@ export const todolistAPI = {
         return instance.delete<ResponceType>(`todo-lists/${todolistID}`)
     },
     putTodolists(todolistID: string, title: string) {
-        return instance.put<null, ResponceType, { title: string }>(`todo-lists/${todolistID}`, {title})
+        return instance.put<null, AxiosResponse<ResponceType>, { title: string }>(`todo-lists/${todolistID}`, {title})
     },
     putReorderTodo(todolistID: string, putAfterItemId: string) {
-        return instance.put<null, ResponceType, { putAfterItemId: string }>(`todo-lists/${todolistID}/tasks`, {putAfterItemId})
+        return instance.put<null, AxiosResponse<ResponceType>, { putAfterItemId: string }>(`todo-lists/${todolistID}/tasks`, {putAfterItemId})
     },
     getTasks(todolistID: string,) {
         return instance.get<TasksRequestType>(`todo-lists/${todolistID}/tasks`)
