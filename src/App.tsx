@@ -10,16 +10,20 @@ import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import {AddItemForm} from "./components/AddItemForm/AddIemForm";
-import {useAppDispatch} from "./Data/Redux/Store";
+import {useAppDispatch, useAppSelector} from "./Data/Redux/Store";
 import {addNewTodolistTC} from "./Data/Redux/Reducers/TodolistReducer";
+import LinearProgress from "@mui/material/LinearProgress";
+import {RequestStatusType} from "./Data/Redux/Reducers/app-reducer";
 
 function App() {
+    let status=useAppSelector<RequestStatusType>(state => state.App.status)
     const dispatch = useAppDispatch()
 const addNewTodo=(newTodo:string)=>{
     dispatch(addNewTodolistTC(newTodo))
 }
   return (
     <div className={s.AppWrapper}>
+
         <AppBar position="static">
             <Toolbar>
                 <IconButton edge="start" color="inherit" aria-label="menu">
@@ -31,6 +35,7 @@ const addNewTodo=(newTodo:string)=>{
                 <Button color="inherit">Login</Button>
             </Toolbar>
         </AppBar>
+        {status==='loading'&& <LinearProgress/>}
         <Container fixed>
             <Grid container style={{padding: '20px'}}>
                 <AddItemForm callback={addNewTodo}/>

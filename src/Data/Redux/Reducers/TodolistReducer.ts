@@ -1,6 +1,7 @@
 import {TodoItemResponceType} from "../../API/APITypes";
 import {todolistAPI} from "../../API/TodolistAPI";
 import {AllThunkType, RootReducerType} from "../Store";
+import {setNewPreloaderStatusAC} from "./app-reducer";
 
 export type TodoReducerActionType = GetTodoACType
     | RemoveTodolistACType
@@ -81,27 +82,42 @@ export const updateTitleTodolistAC=(todolistId:string,newTitle:string)=>{
 }
 export const getTodoTC = (): AllThunkType => {
     return (dispatch) => {
+        dispatch(setNewPreloaderStatusAC('loading'))
         todolistAPI.getTodolists()
-            .then(res => dispatch(getTodoAC(res.data)))
+            .then(res => {
+                dispatch(getTodoAC(res.data))
+                dispatch(setNewPreloaderStatusAC('succeeded'))
+            })
+
     }
 }
 
 export const removeTodolistTC = (todolistId: string): AllThunkType => {
     return (dispatch) => {
+        dispatch(setNewPreloaderStatusAC('loading'))
         todolistAPI.deleteTodolists(todolistId)
-            .then(res => dispatch(removeTodolistAC(todolistId)))
+            .then(res => {
+                dispatch(removeTodolistAC(todolistId))
+                dispatch(setNewPreloaderStatusAC('succeeded'))
+            })
     }
 }
 export const addNewTodolistTC=(newTodo:string):AllThunkType=>{
     return (dispatch)=>{
+        dispatch(setNewPreloaderStatusAC('loading'))
         todolistAPI.postTodolists(newTodo)
-            .then(res=>dispatch(addNewTodolistAC(res.data.data.item)))
+            .then(res=> {
+                dispatch(addNewTodolistAC(res.data.data.item))
+                dispatch(setNewPreloaderStatusAC('succeeded'))
+            })
     }
 }
 
 export const updateTitleTodoTC=(todolistId:string,newTitleTodo:string):AllThunkType=>{
     return (dispatch)=>{
+        dispatch(setNewPreloaderStatusAC('loading'))
        todolistAPI.putTodolists(todolistId,newTitleTodo)
-           .then(()=>{dispatch(updateTitleTodolistAC(todolistId,newTitleTodo))})
+           .then(()=>{dispatch(updateTitleTodolistAC(todolistId,newTitleTodo))
+               dispatch(setNewPreloaderStatusAC('succeeded'))})
     }
 }

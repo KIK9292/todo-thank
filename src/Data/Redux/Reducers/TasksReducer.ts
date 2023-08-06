@@ -2,6 +2,7 @@ import {AddNewTodolistACType, GetTodoACType, RemoveTodolistACType} from "./Todol
 import {TasksPutRequestModelType, TaskStatuses, TasksType} from "../../API/APITypes";
 import {AllThunkType, RootReducerType} from "../Store";
 import {todolistAPI} from "../../API/TodolistAPI";
+import {setNewPreloaderStatusAC} from "./app-reducer";
 
 
 export type TasksReducerActionType =
@@ -86,19 +87,28 @@ export const addNewTaskAC = (task: TasksType) => {
 
 export const getTasksTC = (todolistId: string): AllThunkType => {
     return (dispatch) => {
+        dispatch(setNewPreloaderStatusAC('loading'))
         todolistAPI.getTasks(todolistId)
-            .then(res => dispatch(setTasksAC(todolistId, res.data.items)))
+            .then(res => {
+                dispatch(setTasksAC(todolistId, res.data.items))
+                dispatch(setNewPreloaderStatusAC('succeeded'))
+            })
     }
 }
 
 export const removeTaskTC = (todolistId: string, taskId: string): AllThunkType => {
     return (dispatch) => {
+        dispatch(setNewPreloaderStatusAC('loading'))
         todolistAPI.deleteTask(todolistId, taskId)
-            .then(res => dispatch(removeTaskAC(todolistId, taskId)))
+            .then(res => {
+                dispatch(removeTaskAC(todolistId, taskId))
+                dispatch(setNewPreloaderStatusAC('succeeded'))
+            })
     }
 }
 export const updateStatusTaskTC = (todolistId: string, taskId: string, newStatus: TaskStatuses): AllThunkType => {
     return (dispatch, getState: () => RootReducerType) => {
+        dispatch(setNewPreloaderStatusAC('loading'))
         let task = getState().Tasks[todolistId].find(f => f.id === taskId)
         if (task) {
             const model: TasksPutRequestModelType = {
@@ -112,20 +122,28 @@ export const updateStatusTaskTC = (todolistId: string, taskId: string, newStatus
             }
             todolistAPI.putTask(todolistId, taskId, model)
                 // .then(res=>console.log(res.data.item))
-                .then(res => dispatch(updateTaskAC(res.data.data.item)))
+                .then(res => {
+                    dispatch(updateTaskAC(res.data.data.item))
+                    dispatch(setNewPreloaderStatusAC('succeeded'))
+                })
         }
 
     }
 }
 export const addNewTaskTC=(todolistId:string,title:string): AllThunkType=>{
     return (dispatch)=>{
+        dispatch(setNewPreloaderStatusAC('loading'))
         todolistAPI.postTasks(todolistId,title)
-            .then(res=>dispatch(addNewTaskAC(res.data.data.item)))
+            .then(res=> {
+                dispatch(addNewTaskAC(res.data.data.item))
+                dispatch(setNewPreloaderStatusAC('succeeded'))
+            })
     }
 }
 
 export const updateTitleTaskTC = (todolistId: string, taskId: string, newTitle: string): AllThunkType => {
     return (dispatch, getState: () => RootReducerType) => {
+        dispatch(setNewPreloaderStatusAC('loading'))
         let task = getState().Tasks[todolistId].find(f => f.id === taskId)
         if (task) {
             const model: TasksPutRequestModelType = {
@@ -139,7 +157,10 @@ export const updateTitleTaskTC = (todolistId: string, taskId: string, newTitle: 
             }
             todolistAPI.putTask(todolistId, taskId, model)
                 // .then(res=>console.log(res.data.item))
-                .then(res => dispatch(updateTaskAC(res.data.data.item)))
+                .then(res => {
+                    dispatch(updateTaskAC(res.data.data.item))
+                    dispatch(setNewPreloaderStatusAC('succeeded'))
+                })
         }
 
     }
