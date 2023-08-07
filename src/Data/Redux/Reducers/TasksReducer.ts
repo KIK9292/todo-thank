@@ -1,8 +1,15 @@
-import {AddNewTodolistACType, GetTodoACType, RemoveTodolistACType} from "./TodolistReducer";
+import {
+    addNewTodolistAC,
+    AddNewTodolistACType,
+    GetTodoACType,
+    RemoveTodolistACType,
+    setNewEntityStatusAC
+} from "./TodolistReducer";
 import {TasksPutRequestModelType, TaskStatuses, TasksType} from "../../API/APITypes";
 import {AllThunkType, RootReducerType} from "../Store";
 import {todolistAPI} from "../../API/TodolistAPI";
-import {setNewPreloaderStatusAC} from "./app-reducer";
+import {setNewErrorStatusAC, setNewPreloaderStatusAC} from "./app-reducer";
+import {handleServerAppError, handleServerNetworkError} from "../../error-utils";
 
 
 export type TasksReducerActionType =
@@ -12,7 +19,7 @@ export type TasksReducerActionType =
     | RemoveTodolistACType
     | UpdateTaskACType
     | AddNewTaskACType
-|AddNewTodolistACType
+    | AddNewTodolistACType
 
 export type TasksReducerState = {
     [key: string]: TasksType[]
@@ -45,12 +52,14 @@ export const TasksReducer = (state: TasksReducerState = {}, action: TasksReducer
                 [action.payload.task.todoListId]: state[action.payload.task.todoListId].map(el => el.id === action.payload.task.id ? action.payload.task : el)
             }
         }
-        case "ADD-NEW-TASK":{
-            return { ...state,
-                [action.payload.task.todoListId]:[action.payload.task,...state[action.payload.task.todoListId]]}
+        case "ADD-NEW-TASK": {
+            return {
+                ...state,
+                [action.payload.task.todoListId]: [action.payload.task, ...state[action.payload.task.todoListId]]
+            }
         }
-        case "ADD-TODOLIST":{
-            return {...state,[action.payload.todo.id]:[]}
+        case "ADD-TODOLIST": {
+            return {...state, [action.payload.todo.id]: []}
         }
         default:
             return state
@@ -93,6 +102,9 @@ export const getTasksTC = (todolistId: string): AllThunkType => {
                 dispatch(setTasksAC(todolistId, res.data.items))
                 dispatch(setNewPreloaderStatusAC('succeeded'))
             })
+            .catch((error=>{
+                handleServerNetworkError(error,dispatch)
+            }))
     }
 }
 
@@ -101,9 +113,17 @@ export const removeTaskTC = (todolistId: string, taskId: string): AllThunkType =
         dispatch(setNewPreloaderStatusAC('loading'))
         todolistAPI.deleteTask(todolistId, taskId)
             .then(res => {
-                dispatch(removeTaskAC(todolistId, taskId))
-                dispatch(setNewPreloaderStatusAC('succeeded'))
+
+                if (res.data.resultCode === 0) {
+                    dispatch(removeTaskAC(todolistId, taskId))
+                    dispatch(setNewPreloaderStatusAC('succeeded'))
+                } else {
+                    handleServerAppError(res.data,dispatch)
+                }
             })
+            .catch((error=>{
+                handleServerNetworkError(error,dispatch)
+            }))
     }
 }
 export const updateStatusTaskTC = (todolistId: string, taskId: string, newStatus: TaskStatuses): AllThunkType => {
@@ -123,21 +143,36 @@ export const updateStatusTaskTC = (todolistId: string, taskId: string, newStatus
             todolistAPI.putTask(todolistId, taskId, model)
                 // .then(res=>console.log(res.data.item))
                 .then(res => {
-                    dispatch(updateTaskAC(res.data.data.item))
-                    dispatch(setNewPreloaderStatusAC('succeeded'))
+                    if (res.data.resultCode === 0) {
+                        dispatch(updateTaskAC(res.data.data.item))
+                        dispatch(setNewPreloaderStatusAC('succeeded'))
+                    } else {
+                        handleServerAppError(res.data,dispatch)
+                    }
                 })
+                .catch((error=>{
+                    handleServerNetworkError(error,dispatch)
+                }))
+
         }
 
     }
 }
-export const addNewTaskTC=(todolistId:string,title:string): AllThunkType=>{
-    return (dispatch)=>{
+export const addNewTaskTC = (todolistId: string, title: string): AllThunkType => {
+    return (dispatch) => {
         dispatch(setNewPreloaderStatusAC('loading'))
-        todolistAPI.postTasks(todolistId,title)
-            .then(res=> {
-                dispatch(addNewTaskAC(res.data.data.item))
-                dispatch(setNewPreloaderStatusAC('succeeded'))
+        todolistAPI.postTasks(todolistId, title)
+            .then(res => {
+                if (res.data.resultCode === 0) {
+                    dispatch(addNewTaskAC(res.data.data.item))
+                    dispatch(setNewPreloaderStatusAC('succeeded'))
+                } else {
+                    handleServerAppError(res.data,dispatch)
+                }
             })
+            .catch((error=>{
+                handleServerNetworkError(error,dispatch)
+            }))
     }
 }
 
@@ -158,9 +193,16 @@ export const updateTitleTaskTC = (todolistId: string, taskId: string, newTitle: 
             todolistAPI.putTask(todolistId, taskId, model)
                 // .then(res=>console.log(res.data.item))
                 .then(res => {
-                    dispatch(updateTaskAC(res.data.data.item))
-                    dispatch(setNewPreloaderStatusAC('succeeded'))
+                    if (res.data.resultCode === 0) {
+                        dispatch(updateTaskAC(res.data.data.item))
+                        dispatch(setNewPreloaderStatusAC('succeeded'))
+                    } else {
+                        handleServerAppError(res.data,dispatch)
+                    }
                 })
+                .catch((error=>{
+                    handleServerNetworkError(error,dispatch)
+                }))
         }
 
     }

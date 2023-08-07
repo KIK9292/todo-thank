@@ -6,10 +6,11 @@ import  AddBox  from '@mui/icons-material/AddBox';
 
 type AddItemFormPropsType = {
     callback: (title: string) => void
+    disabled:boolean
 }
 
 export const AddItemForm = (props: AddItemFormPropsType)=>{
-    const {callback}=props
+    const {callback,disabled}=props
     console.log('AddItemForm called')
 
     let [title, setTitle] = useState('')
@@ -45,8 +46,9 @@ export const AddItemForm = (props: AddItemFormPropsType)=>{
                    onKeyPress={onKeyPressHandler}
                    label="AddTitle"
                    helperText={error}
+                   disabled={disabled}
         />
-        <IconButton color="primary" onClick={addItem}>
+        <IconButton color="primary" onClick={addItem} disabled={disabled}>
             <AddBox/>
         </IconButton>
     </div>

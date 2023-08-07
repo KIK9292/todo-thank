@@ -14,7 +14,7 @@ export const Todolists = () => {
     return (
         <div className={s.todolistsWrapper}>
             {todo.map(el=>{
-                return <Todolist todolistId={el.id} todolistTitle={el.title} key={el.id} filterStatus={el.filter}/>
+                return <Todolist todolistId={el.id} todolistTitle={el.title} key={el.id} filterStatus={el.filter} entityStatus={el.entityStatus}/>
             })}
         </div>
     );

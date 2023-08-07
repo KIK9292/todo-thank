@@ -14,38 +14,39 @@ import {useAppDispatch, useAppSelector} from "./Data/Redux/Store";
 import {addNewTodolistTC} from "./Data/Redux/Reducers/TodolistReducer";
 import LinearProgress from "@mui/material/LinearProgress";
 import {RequestStatusType} from "./Data/Redux/Reducers/app-reducer";
+import {ErrorSnackbar} from "./components/ErrorSnackbar/ErrorSnackbar";
 
 function App() {
-    let status=useAppSelector<RequestStatusType>(state => state.App.status)
+    let status = useAppSelector<RequestStatusType>(state => state.App.status)
     const dispatch = useAppDispatch()
-const addNewTodo=(newTodo:string)=>{
-    dispatch(addNewTodolistTC(newTodo))
-}
-  return (
-    <div className={s.AppWrapper}>
-
-        <AppBar position="static">
-            <Toolbar>
-                <IconButton edge="start" color="inherit" aria-label="menu">
-                    <Menu/>
-                </IconButton>
-                <Typography variant="h6">
-                    Todolists
-                </Typography>
-                <Button color="inherit">Login</Button>
-            </Toolbar>
-        </AppBar>
-        {status==='loading'&& <LinearProgress/>}
-        <Container fixed>
-            <Grid container style={{padding: '20px'}}>
-                <AddItemForm callback={addNewTodo}/>
-            </Grid>
-            <Grid container spacing={3}>
-      <Todolists/>
-            </Grid>
-        </Container>
-    </div>
-  );
+    const addNewTodo = (newTodo: string) => {
+        dispatch(addNewTodolistTC(newTodo))
+    }
+    return (
+        <div className={s.AppWrapper}>
+            <ErrorSnackbar/>
+            <AppBar position="static">
+                <Toolbar>
+                    <IconButton edge="start" color="inherit" aria-label="menu">
+                        <Menu/>
+                    </IconButton>
+                    <Typography variant="h6">
+                        Todolists
+                    </Typography>
+                    <Button color="inherit">Login</Button>
+                </Toolbar>
+            </AppBar>
+            {status === 'loading' && <LinearProgress/>}
+            <Container fixed>
+                <Grid container style={{padding: '20px'}}>
+                    <AddItemForm callback={addNewTodo} disabled={false}/>
+                </Grid>
+                <Grid container spacing={3}>
+                    <Todolists/>
+                </Grid>
+            </Container>
+        </div>
+    );
 }
 
 export default App;

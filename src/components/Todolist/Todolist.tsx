@@ -17,16 +17,18 @@ import {
     updateTitleTodoTC
 } from "../../Data/Redux/Reducers/TodolistReducer";
 import {EditableSpan} from "../EditableSpan/EditableSpan";
+import {RequestStatusType} from "../../Data/Redux/Reducers/app-reducer";
 
 type TodolistPropsType = {
     todolistId: string
     todolistTitle: string
     filterStatus:FilterValuesType
+    entityStatus:RequestStatusType
 }
 
 
 export const Todolist = (props: TodolistPropsType) => {
-    const {todolistId, todolistTitle,filterStatus} = props
+    const {todolistId, todolistTitle,filterStatus,entityStatus} = props
     const dispatch = useAppDispatch()
     const tasks = useSelector<RootReducerType, TasksReducerState>(state => state.Tasks)
     const onClickHandler=()=>{
@@ -46,10 +48,10 @@ dispatch(updateTitleTodoTC(todolistId,newTitleTodo))
             <div className={s.nameTodolistContainer}>
                 {/*<h2>{todolistTitle}</h2>*/}
                 <h2><EditableSpan value={todolistTitle} onChange={updateTitleTodoCallback} style={''}/></h2>
-                <IconButton aria-label="delete" size="large" onClick={onClickHandler}>
+                <IconButton aria-label="delete" size="large" onClick={onClickHandler} disabled={entityStatus==='loading'}>
                     <DeleteIcon/>
                 </IconButton></div>
-            <AddItemForm callback={addNewTaskCallback}/>
+            <AddItemForm callback={addNewTaskCallback} disabled={entityStatus==='loading'}/>
             <Tasks todolistId={todolistId} filterStatus={filterStatus}/>
             {tasks[todolistId].length !== 0 &&
               <ButtonGroup variant="contained" aria-label="outlined primary button group">
