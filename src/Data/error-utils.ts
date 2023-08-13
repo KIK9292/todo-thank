@@ -2,6 +2,7 @@ import {ResponceType} from "./API/APITypes";
 import {AppReducerActionsType, setNewErrorStatusAC, setNewPreloaderStatusAC} from "./Redux/Reducers/app-reducer";
 import {Dispatch} from "redux";
 
+export type AxiosErrorType={messages:string[]}
 
 export const handleServerAppError=<T>(data:ResponceType<T>,dispatch:ErrorUtilsDispatchType)=>{
     if (data.messages.length) {

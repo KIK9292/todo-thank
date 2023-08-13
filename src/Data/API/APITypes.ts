@@ -59,3 +59,8 @@ export enum TaskPriorities {
     Urgently = 3,
     Later = 4
 }
+export type authModelResponse={
+    id: number
+    email: string
+    login: string
+}

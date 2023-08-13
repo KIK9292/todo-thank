@@ -126,7 +126,7 @@ export const removeTaskTC = (todolistId: string, taskId: string): AllThunkType =
             }))
     }
 }
-export const updateStatusTaskTC = (todolistId: string, taskId: string, newStatus: TaskStatuses): AllThunkType => {
+export const updateStatusTaskTC =  (todolistId: string, taskId: string, newStatus: TaskStatuses): AllThunkType => {
     return (dispatch, getState: () => RootReducerType) => {
         dispatch(setNewPreloaderStatusAC('loading'))
         let task = getState().Tasks[todolistId].find(f => f.id === taskId)
@@ -140,7 +140,7 @@ export const updateStatusTaskTC = (todolistId: string, taskId: string, newStatus
                 startDate: task.startDate,
                 deadline: task.deadline,
             }
-            todolistAPI.putTask(todolistId, taskId, model)
+             todolistAPI.putTask(todolistId, taskId, model)
                 // .then(res=>console.log(res.data.item))
                 .then(res => {
                     if (res.data.resultCode === 0) {
