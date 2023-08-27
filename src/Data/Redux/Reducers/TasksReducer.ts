@@ -1,14 +1,8 @@
-import {
-    addNewTodolistAC,
-    AddNewTodolistACType,
-    GetTodoACType,
-    RemoveTodolistACType,
-    setNewEntityStatusAC
-} from "./TodolistReducer";
+import {AddNewTodolistACType, GetTodoACType, RemoveTodolistACType} from "./TodolistReducer";
 import {TasksPutRequestModelType, TaskStatuses, TasksType} from "../../API/APITypes";
 import {AllThunkType, RootReducerType} from "../Store";
 import {todolistAPI} from "../../API/TodolistAPI";
-import {setNewErrorStatusAC, setNewPreloaderStatusAC} from "./app-reducer";
+import {setNewPreloaderStatusAC} from "./app-reducer";
 import {handleServerAppError, handleServerNetworkError} from "../../error-utils";
 
 
